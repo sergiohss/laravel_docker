@@ -1,0 +1,27 @@
+version: "2"
+
+services:
+    postgres:
+        image: postgres
+        container_name: postgres_laravel
+        restart: unless-stopped
+        environment:
+          POSTGRES_PASSWORD: laravel_docker
+          POSTGRES_DB: laravel_docker
+        volumes:
+          - "./docker_config/postgres-data:/var/lib/postgresql/data"
+        ports:
+          - '5432:5432'
+      
+    php-apache:
+        container_name: php-apache_laravel
+        build:
+          context: "./docker_config"
+        restart: unless-stopped
+        ports:
+            - '8081:80'
+        volumes:
+          - ".:/var/www/laravel_docker"
+          - "./docker_config/apache/default.conf:/etc/apache2/sites-enabled/000-default.conf"
+        depends_on:
+          - postgres
